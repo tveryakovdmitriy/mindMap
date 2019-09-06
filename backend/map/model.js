@@ -1,7 +1,8 @@
-import {Schema} from 'mongoose'
+import mongoose from 'mongoose'
 
-const MapSchema = new Schema ({
+export const MindMapSchema = new mongoose.Schema ({
   name: {type: String, required: 'name is required', default: 'My map'},
-  userId: {type: Schema.Types.ObjectId, ref: 'User'},
-  blocks: [{ type: Schema.Types.ObjectId, ref: 'Block' }],
+  blocks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Block'}]
 })
+
+export const MindMap = mongoose.model('MindMap', MindMapSchema)

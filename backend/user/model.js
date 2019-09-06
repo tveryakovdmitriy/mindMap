@@ -1,10 +1,10 @@
-import {Schema} from 'mongoose'
+import mongoose from 'mongoose'
 
-const UserSchema = new Schema({
+export const UserSchema = new mongoose.Schema({
   name: {type: String, required: 'name is required for user'},
   email: {type: String, required: 'email is required for user'},
   password: {type: String, required: 'password is required for user'},
-  map: [{type: Schema.Types.ObjectId, ref: 'Map'}]
+  mindMaps: [{type: mongoose.Schema.Types.ObjectId, ref: 'MindMap'}]
 });
 
-export default mongoose.model('User', UserSchema);
+export const User = mongoose.model('User', UserSchema);
