@@ -1,4 +1,5 @@
 import express from 'express'
+import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import apimiddleware from './middlewares/apimiddleware';
 import Block from './block/model'
@@ -20,6 +21,7 @@ mongoose.connection.on('error', error => {
 });
 
 
+app.use(bodyParser.json());
 app.use(API_URL, apimiddleware)
 app.use((req, res) => {console.log('test'); res.send('hello world')})
 

@@ -1,26 +1,22 @@
 import express from 'express'
-import {MindMap} from './model'
+import mindMapController from './controller'
 
 const mapApi = express.Router()
 
-mapApi.route('/:name')
-  .get(function (req, res, next) {
+mapApi.route('/:name*?')
+  .get(async function (req, res, next) {
     const name = req.params.name
-
     if (!name) {
-      res.status(404).send('No mind map with such name')
+      return res.status(404).end('No mind map with such name')
     }
-  
-    console.log('name',name)
-    MindMap.findOne({name}).
-      populate({path: 'blocks', populate: {path: 'blocks'}}).
-      exec(function(err, mindMap) {
-        console.log(mindMap)
-        console.log('err', err)
-        if (!err) {
-          res.json(mindMap)
-        }
-      })
+
+    const mindMap = await mindMapController.getMapWithBlocks({name})
+
+    if (mindMap) {
+        return res.json(mindMap)
+    }
+
+    return res.status(404).send('No mindMapFound')
 
   })
   .put(function (req, res, next) {
@@ -28,7 +24,8 @@ mapApi.route('/:name')
     next()
   })
   .post(function(req, res, next) {
-    console.log('post map')
+    const mindMap = req.body.data
+    mindMapController.create(mindMap)
     next()
   })
   .delete(function(req, res, next){

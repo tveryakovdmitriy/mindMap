@@ -5,4 +5,5 @@ export const MindMapSchema = new mongoose.Schema ({
   blocks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Block'}]
 })
 
+
 export const MindMap = mongoose.model('MindMap', MindMapSchema)

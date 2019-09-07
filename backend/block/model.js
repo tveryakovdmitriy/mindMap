@@ -5,7 +5,8 @@ export const BlockSchema = new Schema({
   description: {type: String},
   style: Schema.Types.Mixed,
   blocks: {type: [mongoose.Schema.Types.ObjectId], ref: 'Block'},
-  parentId: {type: mongoose.Schema.Types.ObjectId, ref: 'Block'}
+  parentId: {type: mongoose.Schema.Types.ObjectId, ref: 'Block'},
+  coordinates: {x: Number, y: Number},
 });
 
 export const Block = mongoose.model('Block', BlockSchema)
