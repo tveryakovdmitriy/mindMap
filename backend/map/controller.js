@@ -1,5 +1,6 @@
 import {MindMap} from './model'
 import blockController from '../block/controller'
+import handleErrors from '../helpers/handleErrors'
 
 const mindMapController = {
 
@@ -24,6 +25,15 @@ const mindMapController = {
   getMapWithBlocks: async (filter) => {
       return await MindMap.findOne(filter).
       populate({path: 'blocks', populate: {path: 'blocks'}})
+  },
+
+  delete: async (mapId) => {
+    const mindMap = await MindMap.findById(mapId)
+
+    if (mindMap) {
+      mindMap.remove({_id: mapId})
+    }
+
   }
 }
 

@@ -6,6 +6,7 @@ import Block from './block/model'
 import MindMap from './map/model'
 
 import {connectOptions} from '../database/config'
+import mindMapController from './map/controller';
 
 const API_URL = '/api'
 
@@ -20,6 +21,16 @@ mongoose.connection.on('error', error => {
   console.log(`database error occured ${error}`)
 });
 
+// mindMapController.delete('5d7225b98bf9e66e6fe1a6c7')
+
+// const testMindMap = {
+//   name: 'test',
+//   blocks: [{title: '1'}, {title: '2'}, {title: '3'}]
+// }
+
+// mindMapController.create(testMindMap)
+
+mindMapController.delete('5d75db1ad25bed2bb137f481')
 
 app.use(bodyParser.json());
 app.use(API_URL, apimiddleware)

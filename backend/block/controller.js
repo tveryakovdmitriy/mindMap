@@ -2,6 +2,7 @@ import {Block} from './model'
 import mindMapController from '../map/controller'
 import traverseTree from '../../helpers/treehelper/traverse'
 import addBlockToTree from './helpers/addBlockToTree'
+import handleErrors from '../helpers/handleErrors'
 
 const blockController = {
     createOne: (blockData, mapId) => {
@@ -47,6 +48,10 @@ const blockController = {
 
         mindMap.save(onError)
 
+    },
+
+    bulkDelete: async (blockIds) => {
+        Block.deleteMany( {_id:{ $in: blockIds}}, handleErrors('Error while deleting blocks'))
     }
 }
 
