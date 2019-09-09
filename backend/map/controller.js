@@ -1,40 +1,52 @@
-import {MindMap} from './model'
-import blockController from '../block/controller'
-import handleErrors from '../helpers/handleErrors'
+import express from 'express'
+import mindMapService from './service'
 
-const mindMapController = {
+const mapApi = express.Router()
 
-  create: (mindMapData) => {
-    const {blocks, ...restData} = mindMapData
-    const mindMap = new MindMap(restData)
+mapApi.route('/:name*?')
 
-    mindMap.save(function(err,res) {
-      if (!err) {
-        blockController.bulkCreate(blocks, res._id)
-      }
-    })
-  },
-
-  get: async (filter = {}) => {
-    const {_id, ...rest} = filter
-    const lookupFunc = _id ? () => MindMap.findById(_id, null, rest) : () => MindMap.findOne(filter)
-
-    return await lookupFunc()
-  },
-
-  getMapWithBlocks: async (filter) => {
-      return await MindMap.findOne(filter).
-      populate({path: 'blocks', populate: {path: 'blocks'}})
-  },
-
-  delete: async (mapId) => {
-    const mindMap = await MindMap.findById(mapId)
-
-    if (mindMap) {
-      mindMap.remove({_id: mapId})
+  .get(async function (req, res, next) {
+    const name = req.params.name
+    if (!name) {
+      return res.status(404).end('No mind map with such name')
     }
 
-  }
-}
+    try {
+      const mindMap = await mindMapService.getMapWithBlocks({name})
+      return res.status(200).json(mindMap)
 
-export default mindMapController
+    } catch(error) {
+      const status = error.status || 500
+      return res.status(status).json(error)
+    }
+
+  })
+
+  .post(async function (req, res, next) {
+    const data = req.params.mindMap
+
+    try {
+      const mindMap = await mindMapService.update(data)
+      return res.status(200).json(mindMap)
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  })
+
+  .delete(async function(req, res, next){
+    const mapId = req.params.id 
+    if (!mapId) {
+      return res.status(404).send('No mind map with such id')
+    }
+
+    try {
+      const result = await mindMapService.delete(mapId)
+      return result
+    } catch(error) {
+      const status = error.status || 500
+      return res.status(status).json(error)
+    }
+  })
+
+
+  export default mapApi
