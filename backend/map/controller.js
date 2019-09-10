@@ -1,18 +1,16 @@
 import express from 'express'
 import mindMapService from './service'
+import { MindMap } from './model'
+import mindMapSerice from './service'
 
 const mapApi = express.Router()
 
-mapApi.route('/:name*?')
+mapApi.route('/')
 
   .get(async function (req, res, next) {
-    const name = req.params.name
-    if (!name) {
-      return res.status(404).end('No mind map with such name')
-    }
 
     try {
-      const mindMap = await mindMapService.getMapWithBlocks({name})
+      const mindMap = await mindMapService.getAll()
       return res.status(200).json(mindMap)
 
     } catch(error) {
@@ -23,28 +21,46 @@ mapApi.route('/:name*?')
   })
 
   .post(async function (req, res, next) {
-    const data = req.params.mindMap
-
     try {
-      const mindMap = await mindMapService.update(data)
-      return res.status(200).json(mindMap)
+      const result = await mindMapService.create(req.body)
+      return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json(error)
     }
   })
 
-  .delete(async function(req, res, next){
-    const mapId = req.params.id 
-    if (!mapId) {
-      return res.status(404).send('No mind map with such id')
+mapApi.route('/:mapId')
+
+  .get(async function (req, res, next) {
+    try {
+      const result = await mindMapService.getOne(req.params.mapId)
+      return res.status(200).json(result)
+    } catch(error) {
+      return res.status(200).json(error)
+    }
+  })
+
+  .put (async function (req, res, next) {
+    const mindMapData = req.body
+    const mapId = req.params.mapId
+    
+    try {
+      const result = await mindMapService.update(mapId, mindMapData)
+      return res.status(201).json(result)
+    } catch(error) {
+      return res.json(error)
     }
 
+  })
+
+  .delete (async function (req, res, next) {
+    const mapId = req.params.mapId
+    
     try {
-      const result = await mindMapService.delete(mapId)
-      return result
+      const result = await mindMapSerice.delete(mapId)
+      return res.status(200).json(result)
     } catch(error) {
-      const status = error.status || 500
-      return res.status(status).json(error)
+      return res.json(error)
     }
   })
 

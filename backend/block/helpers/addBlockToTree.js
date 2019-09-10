@@ -10,7 +10,7 @@ const addBlockToTree = function (blockList) {
     blockList.push(block)
 
     if (parentBlock) {
-      parentBlock.blocks.push(block)
+      block.parentId = parentBlock._id
     }
 
     parentBlock = childBlockList && childBlockList.length ? block : null

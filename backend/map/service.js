@@ -1,62 +1,58 @@
 import {MindMap} from './model'
-import blockSerice from '../block/service'
 
 const mindMapSerice = {
 
-  create: async (mindMapData) => {
-    const {blocks, ...restData} = mindMapData
-    const mindMap = new MindMap(restData)
-    if (blocks && blocks.length) {
-      
-      const createdBlockList = await blockSerice.bulkCreate(blocks)
-      for (const createdBlock of createdBlockList) {
-        mindMap.blocks.push(createdBlock)
-      }
-    }
+  create: async function(mindMap) {
+    const newMindMap = new MindMap(mindMap)
 
     try {
-      return await mindMap.save()
-    } catch(error) {
-      throw error
-    }
-  },
-
-  update: async (mindMapData) => {
-    if (!mindMapData._id) {
-      return await this.create(mindMapData)
-    }
-
-    try {
-      return await MindMap.update({_id: mindMapData._id}, mindMapData, {upsert: true})
+      return await newMindMap.save()
     } catch (error) {
       throw error
     }
   },
 
-  get: async (filter = {}) => {
-    const {_id, ...rest} = filter
-    const lookupFunc = _id ? () => MindMap.findById(_id, null, rest) : () => MindMap.findOne(filter)
+  update: async function(_id, mindMap) {
+    try {
+      return await MindMap.updateOne({_id}, mindMap)
+    } catch (error) {
+      throw error
+    }
+  },
+
+  delete: async function(mapId) {
+    const mindMap = await this.getById(mapId)
+
+    if (!mindMap) {
+      throw {status: 404, message: 'mind map not found'}
+    }
 
     try {
-      return await lookupFunc()
+      return await mindMap.remove()
     } catch(error) {
       throw error
     }
   },
 
-  getMapWithBlocks: async (filter) => {
-      try {
-        return await MindMap.findOne(filter).populate({path: 'blocks', populate: {path: 'blocks'}})
-      } catch (error) {
-        throw error
-      }
+  getById: async function(_id) {
+    try {
+      return await MindMap.findById(_id)
+    } catch(error) {
+      throw error
+    }
   },
 
-  delete: async (mapId) => {
-    const mindMap = await this.get({_id: mapId})
-
+  getAll: async function() {
     try {
-      return await mindMap.remove()
+      return await MindMap.find()      
+    } catch(error) {
+      throw error
+    }
+  },
+
+  bulkDelete(filter) {
+    try {
+      MindMap.deleteMany(filter)
     } catch(error) {
       throw error
     }

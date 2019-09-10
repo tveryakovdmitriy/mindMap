@@ -2,8 +2,10 @@ import express from 'express'
 const apiMiddleware = express.Router()
 import mapApi from '../map/controller'
 import userApi from '../user/controller';
+import blockApi from '../block/controller'
 
-apiMiddleware.use('/map', mapApi)
-apiMiddleware.use('/user', userApi)
+apiMiddleware.use('/maps', mapApi)
+apiMiddleware.use('/users', userApi)
+apiMiddleware.use('/blocks', blockApi)
 
 export default apiMiddleware
