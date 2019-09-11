@@ -1,17 +1,52 @@
 import express from 'express'
-import blockSerice from './service'
+import blockService from './service'
 
 const blockApi = express.Router()
 
 blockApi.route('/')
-
-  .delete(async function(req,res,next) {
-    console.log('deelete', req.body.id)
+  .get(async function(req, res, next) {
     try {
-      const result = await blockSerice.delete(req.body.id)
-      return res.status(200).json(result)
+      const blocks = await blockService.getAll(req.mapId)
+      return res.status(200).json(blocks)
     } catch(error) {
-      return res.status(error.status||500).json(error)
+      next(error)
+    }
+  })
+
+  .post(async function(req, res, next) {
+    try {
+      const createdBlobck = await blockService.create(req.mapId, req.body)
+      return res.status(201).json(createdBlobck)
+    } catch(error) {
+      next(error)
+    }
+  })
+
+blockApi.route('/:blockId')
+  .get(async function(req, res, next) {
+    try {
+      const block = await blockService.getById(req.mapId, req.params.blockId)
+      return res.status(200).json(block)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  .put(async function(req, res, next) {
+    try {
+      const updateResult = await blockService.update(req.params.blockId, req.body)
+      return res.status(200).json(updateResult)
+    } catch(error) {
+      next(error)
+    }
+  })
+
+  .delete(async function(req, res, next) {
+    try {
+      const deleteResult = await blockService.delete(req.mapId, req.params.blockId)
+      return res.status(200).json(deleteResult)
+    } catch(error) {
+      next(error)
     }
   })
 

@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
+
 import apimiddleware from './middlewares/apimiddleware';
 import Block from './block/model'
 import MindMap from './map/model'
@@ -23,12 +24,13 @@ mongoose.connection.on('error', error => {
 
 
 app.use(bodyParser.json());
+
 app.use(API_URL, apimiddleware)
 app.use((req, res) => {console.log('test'); res.send('hello world')})
 
 
 app.use(function (err, req, res, next) {
-  console.error(err)
+  return res.status(err.statusCode || 500).json(err)
 })
 const port = process.env.PORT || '3000'; app.listen(port); 
 

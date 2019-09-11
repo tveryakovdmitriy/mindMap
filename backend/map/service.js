@@ -34,9 +34,9 @@ const mindMapSerice = {
     }
   },
 
-  getById: async function(_id) {
+  getById: async function(_id, filter = {}, options = {}) {
     try {
-      return await MindMap.findById(_id)
+      return await MindMap.findById(_id, filter, options)
     } catch(error) {
       throw error
     }

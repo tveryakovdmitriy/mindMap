@@ -2,6 +2,8 @@ import express from 'express'
 import mindMapService from './service'
 import { MindMap } from './model'
 import mindMapSerice from './service'
+import {validateCreate, validateExist} from './validator'
+import blockApi from '../block/controller'
 
 const mapApi = express.Router()
 
@@ -14,33 +16,32 @@ mapApi.route('/')
       return res.status(200).json(mindMap)
 
     } catch(error) {
-      const status = error.status || 500
-      return res.status(status).json(error)
+      next(error)
     }
 
   })
 
-  .post(async function (req, res, next) {
+  .post(validateExist(), async function (req, res, next) {
     try {
       const result = await mindMapService.create(req.body)
       return res.status(200).json(result)
     } catch (error) {
-      return res.status(500).json(error)
+      next(error)
     }
   })
 
 mapApi.route('/:mapId')
 
-  .get(async function (req, res, next) {
+  .get(validateExist(), async function (req, res, next) {
     try {
-      const result = await mindMapService.getOne(req.params.mapId)
+      const result = await mindMapService.getById(req.params.mapId)
       return res.status(200).json(result)
     } catch(error) {
-      return res.status(200).json(error)
+      next(error)
     }
   })
 
-  .put (async function (req, res, next) {
+  .put (validateCreate(), validateExist(), async function (req, res, next) {
     const mindMapData = req.body
     const mapId = req.params.mapId
     
@@ -48,21 +49,25 @@ mapApi.route('/:mapId')
       const result = await mindMapService.update(mapId, mindMapData)
       return res.status(201).json(result)
     } catch(error) {
-      return res.json(error)
+      next(error)
     }
 
   })
 
-  .delete (async function (req, res, next) {
+  .delete (validateExist(), async function (req, res, next) {
     const mapId = req.params.mapId
     
     try {
       const result = await mindMapSerice.delete(mapId)
       return res.status(200).json(result)
     } catch(error) {
-      return res.json(error)
+      next(error)
     }
   })
 
+mapApi.use('/:mapId/blocks', validateExist(), function(req, res, next) {
+  req.mapId = req.params.mapId
+  next()
+}, blockApi)
 
-  export default mapApi
+export default mapApi

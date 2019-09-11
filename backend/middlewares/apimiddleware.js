@@ -5,7 +5,5 @@ import userApi from '../user/controller';
 import blockApi from '../block/controller'
 
 apiMiddleware.use('/maps', mapApi)
-apiMiddleware.use('/users', userApi)
-apiMiddleware.use('/blocks', blockApi)
 
 export default apiMiddleware
