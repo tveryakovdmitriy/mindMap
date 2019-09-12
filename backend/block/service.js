@@ -2,6 +2,7 @@ import {Block} from './model'
 import mindMapService from '../map/service'
 import { MindMap } from '../map/model'
 import mindMapSerice from '../map/service'
+import mongoose from 'mongoose'
 
 const blockService = {
 
@@ -47,11 +48,8 @@ const blockService = {
 
     delete: async function(mapId, blockId) {
         try {
-            const mindMap = await mindMapSerice.getById(mapId)
-            console.log('mindMap', mindMap)
-            mindMap.blocks = [...mindMap.blocks.filter(mindMapBlockId=> mindMapBlockId !== blockId)]
-            console.log(mindMap.blocks)
-            console.log('blockId', blockId)
+            const mindMap = await mindMapSerice.getById(mapId)            
+            mindMap.blocks = mindMap.blocks.filter(id => !blockId.equals(id))
             mindMap.save()
             return await Block.deleteOne({_id: blockId})            
         } catch(error) {

@@ -1,5 +1,6 @@
 import express from 'express'
 import blockService from './service'
+import { validateExist, validateCreate } from './validator'
 
 const blockApi = express.Router()
 
@@ -13,7 +14,7 @@ blockApi.route('/')
     }
   })
 
-  .post(async function(req, res, next) {
+  .post(validateCreate(), async function(req, res, next) {
     try {
       const createdBlobck = await blockService.create(req.mapId, req.body)
       return res.status(201).json(createdBlobck)
@@ -23,7 +24,8 @@ blockApi.route('/')
   })
 
 blockApi.route('/:blockId')
-  .get(async function(req, res, next) {
+
+  .get(validateExist(), async function(req, res, next) {
     try {
       const block = await blockService.getById(req.mapId, req.params.blockId)
       return res.status(200).json(block)
@@ -32,7 +34,7 @@ blockApi.route('/:blockId')
     }
   })
 
-  .put(async function(req, res, next) {
+  .put(validateExist(), validateCreate(), async function(req, res, next) {
     try {
       const updateResult = await blockService.update(req.params.blockId, req.body)
       return res.status(200).json(updateResult)
@@ -41,7 +43,7 @@ blockApi.route('/:blockId')
     }
   })
 
-  .delete(async function(req, res, next) {
+  .delete (validateExist(), async function(req, res, next) {
     try {
       const deleteResult = await blockService.delete(req.mapId, req.params.blockId)
       return res.status(200).json(deleteResult)

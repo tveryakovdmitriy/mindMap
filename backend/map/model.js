@@ -8,7 +8,6 @@ export const MindMapSchema = new mongoose.Schema ({
 
 MindMapSchema.post('remove', function(mindMap) {
   if (mindMap && mindMap.blocks && mindMap.blocks.length) {
-    console.log(mindMap.blocks)
     blockSerice.bulkDelete(mindMap.blocks)
   }
 })

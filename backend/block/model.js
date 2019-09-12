@@ -8,8 +8,4 @@ export const BlockSchema = new Schema({
   coordinates: {x: Number, y: Number},
 });
 
-BlockSchema.post('remove', function(block) {
-  console.log('post remove', block)
-})
-
 export const Block = mongoose.model('Block', BlockSchema)

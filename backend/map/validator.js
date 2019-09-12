@@ -1,18 +1,26 @@
 import {check, validationResult} from 'express-validator'
-import validateRequest from '../helpers/validation/validateRequest'
+import filterInput from '../middlewares/filterInput'
 import mindMapSerice from './service'
+import validateObjectId from '../helpers/validation/validateObjectId'
 
 export const validateCreate = () => async function(req,res, next) {
   const validationList = [
-    check('name', 'Необходимо указать имя').not().isEmpty()
+    check('name', 'Поле является обязательным').not().isEmpty()
   ]
 
-  validateRequest(req, next, validationList)
+  filterInput(req, next, validationList)
 }
 
 export const validateExist = () => async function(req, res, next) {
   const validationList = [
-    check('mapId').exists({checkNull: true}).custom(async (mapId) => {
+    check('mapId').custom(async (mapId) => {
+      const isValid = validateObjectId(mapId)
+
+      if (!isValid) {
+        throw 'Неправильный формат'
+      }
+
+
       const mindMap = await mindMapSerice.getById(mapId)
       if (!mindMap) {
         throw 'Не удалось найти карту'
@@ -22,5 +30,5 @@ export const validateExist = () => async function(req, res, next) {
     })
   ]
 
-  validateRequest(req, next, validationList)
+  filterInput(req, next, validationList)
 }

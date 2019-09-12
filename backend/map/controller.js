@@ -21,7 +21,7 @@ mapApi.route('/')
 
   })
 
-  .post(validateExist(), async function (req, res, next) {
+  .post(validateCreate(), async function (req, res, next) {
     try {
       const result = await mindMapService.create(req.body)
       return res.status(200).json(result)
@@ -32,7 +32,9 @@ mapApi.route('/')
 
 mapApi.route('/:mapId')
 
-  .get(validateExist(), async function (req, res, next) {
+  .all(validateExist())
+
+  .get(async function (req, res, next) {
     try {
       const result = await mindMapService.getById(req.params.mapId)
       return res.status(200).json(result)
@@ -41,7 +43,7 @@ mapApi.route('/:mapId')
     }
   })
 
-  .put (validateCreate(), validateExist(), async function (req, res, next) {
+  .put (validateCreate(), async function (req, res, next) {
     const mindMapData = req.body
     const mapId = req.params.mapId
     
@@ -54,7 +56,7 @@ mapApi.route('/:mapId')
 
   })
 
-  .delete (validateExist(), async function (req, res, next) {
+  .delete (async function (req, res, next) {
     const mapId = req.params.mapId
     
     try {
