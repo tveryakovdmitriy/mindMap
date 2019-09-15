@@ -1,8 +1,6 @@
 import {Block} from './model'
 import mindMapService from '../map/service'
-import { MindMap } from '../map/model'
 import mindMapSerice from '../map/service'
-import mongoose from 'mongoose'
 
 const blockService = {
 
